@@ -1,0 +1,6 @@
+Flask
+numpy
+scikit-learn
+# extra added
+pymongo
+Werkzeug
