@@ -2,7 +2,7 @@ import os
 import joblib
 
 # Correct relative path
-model_path = os.path.join(os.path.dirname(__file__), "diabetes_model.pkl")
+model_path = os.path.join(os.path.dirname(__file__), "random_forest_balanced.pkl")
 
 def load_model():
     if not os.path.exists(model_path):

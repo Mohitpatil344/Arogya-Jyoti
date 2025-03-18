@@ -1,4 +1,4 @@
-from Backend.database.db import get_db
+from .db import get_db
 
 def get_user_collection():
     db = get_db()
