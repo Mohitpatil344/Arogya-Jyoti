@@ -30,7 +30,9 @@ const FormPage = () => {
     setLoading(true);
     try {
       const result = await predictDiabetes(formData);
+      // Store both the risk level and the form data
       localStorage.setItem('diabetesRisk', result.risk);
+      localStorage.setItem('medicalData', JSON.stringify(formData));
       navigate('/lifestyle');
     } catch (error) {
       alert('Error submitting form. Please try again.');

@@ -38,6 +38,8 @@ const LifestylePage = () => {
     setLoading(true);
     try {
       await submitLifestyle(formData);
+      // Store lifestyle data
+      localStorage.setItem('lifestyleData', JSON.stringify(formData));
       navigate('/report');
     } catch (error) {
       alert('Error submitting lifestyle data. Please try again.');

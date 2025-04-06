@@ -48,24 +48,40 @@ export const submitLifestyle = async (lifestyleData) => {
 
 export const getReport = async () => {
   try {
-    // For development, return mock data
-    // Remove this when backend is ready
+    // For development, return mock data based on stored information
+    const risk = localStorage.getItem('diabetesRisk') || 'low';
+    const medicalData = JSON.parse(localStorage.getItem('medicalData') || '{}');
+    const lifestyleData = JSON.parse(localStorage.getItem('lifestyleData') || '{}');
+
     return {
-      riskLevel: localStorage.getItem('diabetesRisk') || 'low',
+      riskLevel: risk,
       medicalMetrics: {
-        'Blood Glucose': '120 mg/dL',
-        'BMI': '24.5',
-        'Blood Pressure': '120/80 mmHg',
+        'Blood Glucose': `${medicalData.glucose || 120} mg/dL`,
+        'BMI': medicalData.bmi || '24.5',
+        'Blood Pressure': `${medicalData.bloodPressure || 120}/80 mmHg`,
+        'Age': medicalData.age || '35',
+        'Insulin Level': `${medicalData.insulin || 80} mu U/ml`,
       },
       lifestyleMetrics: {
-        'Sleep': '7 hours/day',
-        'Exercise': 'Moderate',
-        'Diet Quality': 'Good',
+        'Sleep': `${lifestyleData.sleepHours || 7} hours/day`,
+        'Exercise': lifestyleData.exerciseFrequency || 'Moderate',
+        'Diet Quality': lifestyleData.fruitVegIntake || 'Good',
+        'Water Intake': `${lifestyleData.waterIntake || 2} L/day`,
+        'Stress Level': lifestyleData.stressLevel || 'Moderate',
       },
       observations: [
-        'Blood glucose levels are within normal range',
-        'Regular exercise routine is beneficial',
-        'Consider increasing water intake',
+        risk === 'high' 
+          ? 'Your blood glucose levels indicate increased risk'
+          : 'Blood glucose levels are within normal range',
+        lifestyleData.exerciseFrequency === 'daily'
+          ? 'Excellent exercise routine, keep it up!'
+          : 'Consider increasing physical activity',
+        Number(lifestyleData.waterIntake) >= 3
+          ? 'Good hydration habits'
+          : 'Consider increasing water intake',
+        Number(lifestyleData.sleepHours) >= 7
+          ? 'Healthy sleep pattern'
+          : 'Try to get more sleep for better health',
       ],
     };
     
@@ -79,31 +95,47 @@ export const getReport = async () => {
 
 export const getHealthPlan = async () => {
   try {
-    // For development, return mock data
-    // Remove this when backend is ready
+    const risk = localStorage.getItem('diabetesRisk') || 'low';
+    const lifestyleData = JSON.parse(localStorage.getItem('lifestyleData') || '{}');
+    
+    // Customize plan based on stored data
     return {
       exercise: [
-        'Start with 30 minutes of walking daily',
+        lifestyleData.exerciseFrequency === 'rarely' 
+          ? 'Start with 15 minutes of walking daily'
+          : 'Maintain your current exercise routine',
         'Include strength training twice a week',
         'Practice yoga for flexibility',
       ],
       diet: [
         'Increase fiber intake through whole grains',
-        'Limit processed sugar consumption',
+        Number(lifestyleData.sugarIntake) > 30 
+          ? 'Reduce sugar consumption significantly'
+          : 'Maintain current sugar intake levels',
         'Eat more leafy greens',
       ],
       lifestyle: [
-        'Maintain regular sleep schedule',
-        'Take breaks during work hours',
-        'Practice stress management techniques',
+        Number(lifestyleData.sleepHours) < 7 
+          ? 'Improve sleep schedule to get at least 7 hours'
+          : 'Maintain regular sleep schedule',
+        Number(lifestyleData.screenTime) > 8 
+          ? 'Reduce screen time and take regular breaks'
+          : 'Continue maintaining healthy screen time habits',
+        lifestyleData.stressLevel === 'high'
+          ? 'Priority: Practice stress management techniques'
+          : 'Practice regular relaxation exercises',
       ],
       goals: [
-        'Reduce BMI by 2 points in 3 months',
+        risk === 'high' 
+          ? 'Priority: Reduce blood glucose levels'
+          : 'Maintain healthy blood glucose levels',
         'Achieve 150 minutes of exercise weekly',
-        'Keep blood glucose under 140 mg/dL',
+        'Stay well hydrated with 2-3L water daily',
       ],
       nextSteps: [
-        'Schedule a follow-up with your healthcare provider',
+        risk === 'high'
+          ? 'Schedule a follow-up with your healthcare provider immediately'
+          : 'Schedule a routine health check-up',
         'Start a food and exercise journal',
         'Join a local fitness class or group',
       ],
