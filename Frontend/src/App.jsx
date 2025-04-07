@@ -6,6 +6,7 @@ import FormPage from './pages/FormPage';
 import LifestylePage from './pages/LifestylePage';
 import ReportPage from './pages/ReportPage';
 import PlanPage from './pages/PlanPage';
+import ChatBot from './components/Chat/ChatBot';
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
             <Route path="/plan" element={<PlanPage />} />
           </Routes>
         </main>
+
+        <ChatBot />
       </div>
     </Router>
   );
