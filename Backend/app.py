@@ -9,8 +9,9 @@ app = Flask(__name__ ,template_folder='templates')
 # Use an environment variable for better security (fallback to a default)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your_secret_key")
 
-# Enable CORS for frontend interactions (e.g., Flutter, React)
-# CORS(app)
+from flask_cors import CORS
+CORS(app)
+
 
 # Initialize the MongoDB connection
 try:

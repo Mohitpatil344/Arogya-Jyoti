@@ -6,14 +6,14 @@ from PIL import Image
 import re
 import fitz  # PyMuPDF
 
-scanner_bp = Blueprint('scanner', __name__)
+bp = Blueprint('scanner', __name__, url_prefix='/scanner')
 
 # Create 'uploads' folder if it doesn't exist
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-@scanner_bp.route('/upload-report', methods=['POST'])
+@bp.route('/upload-report', methods=['POST'])
 def upload_report():
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
@@ -33,7 +33,7 @@ def upload_report():
         return jsonify({'error': str(e)}), 500
 
 
-def extract_medical_data(filepath):
+def extract_medical_data(filepath): 
     text = ""
 
     # Check if file is PDF
@@ -56,7 +56,7 @@ def extract_medical_data(filepath):
 
     # Parse values
     glucose = re.search(r'glucose\s*[:\-]?\s*(\d+)', text, re.IGNORECASE)
-    bp = re.search(r'(blood pressure|bp)\s*[:\-]?\s*(\d+\/\d+)', text, re.IGNORECASE)
+    bp = re.search(r'(blood pressure|bp)\s*[:\-]?\s*(\d+/\d+)', text, re.IGNORECASE)
     skin = re.search(r'skin thickness\s*[:\-]?\s*(\d+)', text, re.IGNORECASE)
 
     return {
@@ -65,4 +65,3 @@ def extract_medical_data(filepath):
         'skin_thickness': int(skin.group(1)) if skin else None,
         'raw_text': text  # For debugging or fallback display
     }
-

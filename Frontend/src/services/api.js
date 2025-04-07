@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'http://localhost:5000', // <-- your Flask backend
   headers: {
     'Content-Type': 'application/json',
   },
@@ -148,3 +148,5 @@ export const getHealthPlan = async () => {
     throw new Error('Failed to fetch health plan');
   }
 };
+
+export default api;

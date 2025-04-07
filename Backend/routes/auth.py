@@ -1,66 +1,55 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from Database.models import get_user_collection  # Use relative import
-
-from models.schema import UserRegisterSchema, UserLoginSchema  # Import schemas
-
+from Database.models import get_user_collection
+from models.schema import UserRegisterSchema, UserLoginSchema
 import datetime
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp.route('/register', methods=['GET', 'POST'])
+# --------------------------
+# Register Endpoint (POST)
+# --------------------------
+@bp.route('/register', methods=['POST'])
 def register():
-    if request.method == 'POST':
-        try:
-            data = UserRegisterSchema(**request.form)  # Validate form data using Pydantic
+    try:
+        data = UserRegisterSchema(**request.json)
 
-            # Hash password
-            password_hash = generate_password_hash(data.password)
+        users_collection = get_user_collection()
 
-            # Get user collection
-            users_collection = get_user_collection()
+        if users_collection.find_one({"email": data.email}):
+            return jsonify({"success": False, "message": "Email already registered."}), 409
 
-            # Check if user already exists
-            if users_collection.find_one({"email": data.email}):
-                flash("Email already registered. Please log in.")
-                return redirect(url_for('auth.login'))
+        password_hash = generate_password_hash(data.password)
+        new_user = {
+            "username": data.username,
+            "email": data.email,
+            "password_hash": password_hash,
+            "created_at": datetime.datetime.utcnow()
+        }
 
-            # Create user
-            new_user = {
-                "username": data.username,
-                "email": data.email,
-                "password_hash": password_hash,
-                "created_at": datetime.datetime.utcnow()
-            }
+        users_collection.insert_one(new_user)
 
-            users_collection.insert_one(new_user)
+        return jsonify({"success": True, "message": "Registration successful."}), 201
 
-            flash('Registration successful! Please log in.')
-            return redirect(url_for('auth.login'))
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
 
-        except Exception as e:
-            flash(f"Error: {str(e)}")
-
-    return render_template('auth/register.html')
-
-
-@bp.route('/login', methods=['GET', 'POST'])
+# --------------------------
+# Login Endpoint (POST)
+# --------------------------@bp.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        try:
-            data = UserLoginSchema(**request.form)  # Validate form data using Pydantic
+    try:
+        data = UserLoginSchema(**request.json)
+        users_collection = get_user_collection()
+        user = users_collection.find_one({"email": data.email})
 
-            users_collection = get_user_collection()
-            user = users_collection.find_one({"email": data.email})
+        if user and check_password_hash(user["password_hash"], data.password):
+            return jsonify({
+                "success": True,
+                "message": "Login successful"
+            }), 200
 
-            if user and check_password_hash(user["password_hash"], data.password):
-                flash('Login successful!')
-                return redirect(url_for('dashboard'))  # Update this based on your app
+        return jsonify({"success": False, "message": "Invalid email or password"}), 401
 
-            flash('Invalid email or password')
-
-        except Exception as e:
-            flash(f"Error: {str(e)}")
-
-    return render_template('auth/login.html')
-
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
