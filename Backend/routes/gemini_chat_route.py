@@ -21,7 +21,16 @@ def chat(user_id):
         return jsonify({"error": "Empty message"}), 400
 
     # Get Gemini response
-    bot_response = get_diabetes_chat_response(user_message)
+    prompt = f"""
+You are a helpful, concise medical assistant chatbot.
+
+Respond to the following question **in simple, direct bullet points**.
+Make it short, medically accurate, and suitable for diabetics.
+
+Question:
+{user_message}
+"""
+    bot_response = get_diabetes_chat_response(prompt)
 
     # Save chat to DB
     save_chat(user_id, user_message, bot_response)
