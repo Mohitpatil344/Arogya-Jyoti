@@ -30,18 +30,30 @@ const FormPage = () => {
     setLoading(true);
     try {
       const result = await predictDiabetes(formData);
-
-      // Store prediction result and form data
-      localStorage.setItem('diabetesRisk', result.risk);
+  
+      const report = {
+        riskLevel: result.prediction === 1 ? 'high' : 'low',
+        medicalMetrics: formData,
+        lifestyleMetrics: {}, // will be added later
+        observations: [
+          result.prediction === 1
+            ? 'Your results indicate a high risk of diabetes.'
+            : 'You are likely not diabetic.',
+        ]
+      };
+      
+  
+      localStorage.setItem('report', JSON.stringify(report));
       localStorage.setItem('medicalData', JSON.stringify(formData));
-
       navigate('/lifestyle');
+  
     } catch (error) {
       alert('Error submitting form. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-2xl mx-auto">

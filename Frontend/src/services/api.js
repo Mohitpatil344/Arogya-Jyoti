@@ -18,39 +18,20 @@ api.interceptors.response.use(
 );
 
 // 🔍 Predict diabetes risk using the ML model
-export const predictDiabetes = async (formValues) => {
-  try {
-    console.log('Form Values:', formValues); // Debugging
+export const predictDiabetes = async (formData) => {
+  const payload = {
+    Pregnancies: parseInt(formData.pregnancies),
+    Glucose: parseFloat(formData.glucose),
+    BloodPressure: parseFloat(formData.bloodPressure),
+    SkinThickness: parseFloat(formData.skinThickness),
+    Insulin: parseFloat(formData.insulin),
+    BMI: parseFloat(formData.bmi),
+    DiabetesPedigreeFunction: parseFloat(formData.diabetesPedigree),
+    Age: parseInt(formData.age)
+  };
 
-    const {
-      pregnancies,
-      glucose,
-      bloodPressure,
-      skinThickness,
-      insulin,
-      bmi,
-      diabetesPedigree,
-      age,
-    } = formValues;
-
-    // Match Flask expected key format
-    const payload = {
-      Pregnancies: Number(pregnancies),
-      Glucose: Number(glucose),
-      BloodPressure: Number(bloodPressure),
-      SkinThickness: Number(skinThickness),
-      Insulin: Number(insulin),
-      BMI: Number(bmi),
-      DiabetesPedigreeFunction: Number(diabetesPedigree),
-      Age: Number(age),
-    };
-
-    // Send to Flask backend
-    return await api.post('/predict', payload);
-  } catch (error) {
-    console.error('Prediction error:', error);
-    throw new Error('Failed to get prediction');
-  }
+  const response = await axios.post('http://localhost:5000/predict', payload);
+  return response.data; // assuming { risk: "high" | "low" }
 };
 
 export default api;

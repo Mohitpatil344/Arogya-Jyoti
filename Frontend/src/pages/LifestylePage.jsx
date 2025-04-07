@@ -35,26 +35,26 @@ const LifestylePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-
-    // Generate mock report from formData
-    const mockReport = {
-      riskLevel:
-        parseInt(formData.sleepHours) < 5 || parseInt(formData.sugarIntake) > 100
-          ? 'high'
-          : 'low',
-      medicalMetrics: {
-        'Sleep Hours': formData.sleepHours,
-        'Sugar Intake': formData.sugarIntake,
-        'Calorie Intake': formData.calorieIntake,
-        'Water Intake': formData.waterIntake
-      },
+  
+    const localReport = JSON.parse(localStorage.getItem('report')) || {};
+  
+    const updatedReport = {
+      ...localReport,
       lifestyleMetrics: {
         'Exercise Frequency': formData.exerciseFrequency,
         'Exercise Type': formData.exerciseType,
         'Screen Time': formData.screenTime,
         'Sitting Hours': formData.sittingHours
       },
+      medicalMetrics: {
+        ...localReport.medicalMetrics,
+        'Sleep Hours': formData.sleepHours,
+        'Sugar Intake': formData.sugarIntake,
+        'Calorie Intake': formData.calorieIntake,
+        'Water Intake': formData.waterIntake
+      },
       observations: [
+        ...localReport.observations || [],
         parseInt(formData.sleepHours) < 5
           ? 'You are not getting enough sleep.'
           : 'Your sleep pattern looks good.',
@@ -66,14 +66,12 @@ const LifestylePage = () => {
           : 'Great job staying active!'
       ]
     };
-
-    // Save report to localStorage
-    localStorage.setItem('report', JSON.stringify(mockReport));
-
-    // Navigate to report page
+  
+    localStorage.setItem('report', JSON.stringify(updatedReport));
     navigate('/report');
     setLoading(false);
   };
+  
 
   return (
     <div className="max-w-2xl mx-auto">
