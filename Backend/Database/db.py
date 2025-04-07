@@ -6,14 +6,14 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-# Configuration from environment
-MONGO_URI = os.getenv("MONGO_URI")
-DB_NAME = os.getenv("DB_NAME")
+# Configuration from environment variables
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
+DB_NAME = os.getenv("DB_NAME", "test_db")
 
 db = None  # Initialize db outside the function
 
 def get_db():
-    """Initialize and return the database instance."""
+    """Initialize and return the MongoDB database instance."""
     global db
     if db is None:
         client = MongoClient(MONGO_URI)
@@ -29,7 +29,7 @@ def get_collection(collection_name):
     return get_db()[collection_name]
 
 def init_app(app: Flask):
-    """Initialize the database with the Flask app."""
+    """Initialize the database with the Flask app and register teardown."""
     get_db()
     app.teardown_appcontext(close_db_connection)
 
