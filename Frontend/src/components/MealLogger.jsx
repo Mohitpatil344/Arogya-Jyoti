@@ -3,6 +3,7 @@ import { createWorker } from 'tesseract.js';
 import { Camera, Upload, Loader2, Utensils } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+
 const MealLogger = () => {
   const [image, setImage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);

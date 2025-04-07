@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import Button from '../components/Shared/Button';
-// import { getReport } from '../services/api'; // Removed API call
 import html2pdf from 'html2pdf.js';
 
 const ReportPage = () => {
@@ -65,6 +64,15 @@ const ReportPage = () => {
             <h2 className="ml-3 text-2xl font-bold">
               {isHighRisk ? 'High Risk of Diabetes' : 'Low Risk of Diabetes'}
             </h2>
+          </div>
+          <div className="mt-6 text-center">
+            <h1 className="text-4xl font-bold tracking-tight">
+              {isHighRisk ? (
+                <span className="text-red-700">Diabetes Predicted</span>
+              ) : (
+                <span className="text-green-700">No Diabetes</span>
+              )}
+            </h1>
           </div>
         </div>
 
