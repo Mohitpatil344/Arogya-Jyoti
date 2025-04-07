@@ -17,6 +17,7 @@ import Reportpdfpage from './pages/Reportpdfpage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ConsultationPage from "./pages/ConsultationPage";
+import Meet from "./pages/Meet"
 const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -90,6 +91,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/consultation" element={<Layout><ConsultationPage /></Layout>} />
+        <Route path="/meet" element={<Layout><Meet /></Layout>} />
       </Routes>
     </Router>
   );
