@@ -1,9 +1,14 @@
+import os
 from flask import Flask
-from pymongo import MongoClient  
+from pymongo import MongoClient
+from dotenv import load_dotenv
 
-# Configuration
-MONGO_URI = "mongodb+srv://mohitpatil:zT8nzBXmIsgQGDPP@mohit-personal.ghcwf.mongodb.net/arogya_jyoti"
-DB_NAME = "arogya_jyoti"
+# Load environment variables from .env file
+load_dotenv()
+
+# Configuration from environment
+MONGO_URI = os.getenv("MONGO_URI")
+DB_NAME = os.getenv("DB_NAME")
 
 db = None  # Initialize db outside the function
 
