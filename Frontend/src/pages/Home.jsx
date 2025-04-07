@@ -7,9 +7,11 @@ import {
   Star,
   ArrowRight,
   CheckCircle,
+  Utensils,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Button from "../components/Shared/Button";
+import MealLogger from "../components/MealLogger";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -114,6 +116,11 @@ const Home = () => {
           </motion.div>
         </div>
 
+        {/* Meal Logger Section */}
+        <div className="container mx-auto px-4 py-16">
+          <MealLogger />
+        </div>
+
         {/* Features Section */}
         <div className="container mx-auto px-4 py-24">
           <motion.div
@@ -131,7 +138,7 @@ const Home = () => {
               and management
             </p>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
             <FeatureCard
               icon={<Heart className="w-12 h-12 text-blue-600" />}
               title="Personalized Assessment"
@@ -146,6 +153,11 @@ const Home = () => {
               icon={<Stethoscope className="w-12 h-12 text-blue-600" />}
               title="Expert Recommendations"
               description="Receive tailored health plans and tips from medical professionals"
+            />
+            <FeatureCard
+              icon={<Utensils className="w-12 h-12 text-blue-600" />}
+              title="Smart Meal Tracking"
+              description="Track your meals with AI-powered nutrition analysis for better dietary control"
             />
           </div>
         </div>

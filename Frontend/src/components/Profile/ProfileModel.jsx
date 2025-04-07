@@ -67,11 +67,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
               </div>
 
               <div className="mt-8 flex justify-end space-x-4">
-                <Button
-                  text="Edit Profile"
-                  variant="secondary"
-                  onClick={() => {/* Implement edit functionality */}}
-                />
+             
                 <Button
                   text="Close"
                   onClick={onClose}
