@@ -13,10 +13,10 @@ import FormPage from './pages/FormPage';
 import LifestylePage from './pages/LifestylePage';
 import ReportPage from './pages/ReportPage';
 import PlanPage from './pages/PlanPage';
-import Reportpdfpage from './pages/ReportPage';
+import Reportpdfpage from './pages/Reportpdfpage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-
+import ConsultationPage from "./pages/ConsultationPage";
 const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -89,6 +89,7 @@ function App() {
         <Route path="/report-pdf" element={<Layout><Reportpdfpage /></Layout>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/consultation" element={<Layout><ConsultationPage /></Layout>} />
       </Routes>
     </Router>
   );
