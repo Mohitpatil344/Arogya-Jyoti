@@ -1,15 +1,16 @@
 import os
 from flask import Flask, jsonify
 from dotenv import load_dotenv
-from routes.gemini_chat_route import chat_bp
+from flask_cors import CORS
 
-# ✅ Load environment variables first
+# ✅ Load environment variables
 load_dotenv()
 
-from routes import prediction, auth, dashboard, admin, report, lifestyle, scanner
+# ✅ Import blueprints
+from routes.gemini_chat_route import chat_bp
+from routes.prediction import prediction_bp
+from routes import auth, dashboard, admin, report, lifestyle, scanner
 from Database import db
-
-from flask_cors import CORS
 
 # Create the Flask app
 app = Flask(__name__, template_folder='templates')
@@ -22,8 +23,8 @@ app.config['GEMINI_API_KEY'] = os.getenv("GEMINI_API_KEY")
 # Allow CORS
 CORS(app)
 
-# ✅ Debug print (remove in prod)
-print("JWT_SECRET:", app.config['JWT_SECRET'])  # ✅ Correct
+# Debug logs (remove in production)
+print("JWT_SECRET:", app.config['JWT_SECRET'])
 print("Mongo URI:", "Loaded" if app.config['MONGO_URI'] else "Not Found")
 print("Gemini API Key:", "Loaded" if app.config['GEMINI_API_KEY'] else "Not Found")
 
@@ -39,8 +40,8 @@ except Exception as e:
 def home():
     return jsonify({"message": "Welcome to the Diabetes Prediction API!"})
 
-# Register route blueprints
-app.register_blueprint(prediction.bp)
+# ✅ Register blueprints (only once each)
+app.register_blueprint(prediction_bp)
 app.register_blueprint(auth.bp)
 app.register_blueprint(dashboard.bp)
 app.register_blueprint(admin.bp)
