@@ -4,7 +4,6 @@ import DailyRoutine from '../components/Lifestyle/DailyRoutine';
 import Diet from '../components/Lifestyle/Diet';
 import PhysicalActivity from '../components/Lifestyle/PhysicalActivity';
 import Button from '../components/Shared/Button';
-import { submitLifestyle } from '../services/api';
 
 const LifestylePage = () => {
   const navigate = useNavigate();
@@ -33,19 +32,47 @@ const LifestylePage = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await submitLifestyle(formData);
-      // Store lifestyle data
-      localStorage.setItem('lifestyleData', JSON.stringify(formData));
-      navigate('/report');
-    } catch (error) {
-      alert('Error submitting lifestyle data. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+
+    // Generate mock report from formData
+    const mockReport = {
+      riskLevel:
+        parseInt(formData.sleepHours) < 5 || parseInt(formData.sugarIntake) > 100
+          ? 'high'
+          : 'low',
+      medicalMetrics: {
+        'Sleep Hours': formData.sleepHours,
+        'Sugar Intake': formData.sugarIntake,
+        'Calorie Intake': formData.calorieIntake,
+        'Water Intake': formData.waterIntake
+      },
+      lifestyleMetrics: {
+        'Exercise Frequency': formData.exerciseFrequency,
+        'Exercise Type': formData.exerciseType,
+        'Screen Time': formData.screenTime,
+        'Sitting Hours': formData.sittingHours
+      },
+      observations: [
+        parseInt(formData.sleepHours) < 5
+          ? 'You are not getting enough sleep.'
+          : 'Your sleep pattern looks good.',
+        parseInt(formData.sugarIntake) > 100
+          ? 'High sugar intake observed.'
+          : 'Sugar intake is within healthy range.',
+        formData.exerciseFrequency === 'none'
+          ? 'Consider adding physical activity to your routine.'
+          : 'Great job staying active!'
+      ]
+    };
+
+    // Save report to localStorage
+    localStorage.setItem('report', JSON.stringify(mockReport));
+
+    // Navigate to report page
+    navigate('/report');
+    setLoading(false);
   };
 
   return (

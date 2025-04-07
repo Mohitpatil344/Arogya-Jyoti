@@ -1,47 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { getHealthPlan } from '../services/api';
+import React from 'react';
 import { Activity, Apple, Moon, Heart } from 'lucide-react';
 
 const PlanPage = () => {
-  const [loading, setLoading] = useState(true);
-  const [plan, setPlan] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchPlan = async () => {
-      try {
-        const data = await getHealthPlan();
-        setPlan(data);
-      } catch (err) {
-        setError('Failed to load health plan. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPlan();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center text-red-600">
-        <p>{error}</p>
-      </div>
-    );
-  }
+  const plan = {
+    exercise: [
+      '30 minutes of brisk walking every day',
+      'Stretching exercises in the morning',
+    ],
+    diet: [
+      'Eat more vegetables and whole grains',
+      'Reduce sugar and processed food intake',
+    ],
+    lifestyle: [
+      'Sleep at least 7 hours a night',
+      'Reduce screen time before bed',
+    ],
+    goals: [
+      'Lose 5 kg in 3 months',
+      'Improve cardiovascular health',
+    ],
+    nextSteps: [
+      'Start tracking your meals using a health app',
+      'Join a local gym or online fitness program',
+      'Schedule a health check-up in a month',
+    ],
+  };
 
   const categories = [
     { icon: Activity, title: 'Exercise Plan', key: 'exercise' },
     { icon: Apple, title: 'Diet Recommendations', key: 'diet' },
     { icon: Moon, title: 'Lifestyle Changes', key: 'lifestyle' },
-    { icon: Heart, title: 'Health Goals', key: 'goals' }
+    { icon: Heart, title: 'Health Goals', key: 'goals' },
   ];
 
   return (

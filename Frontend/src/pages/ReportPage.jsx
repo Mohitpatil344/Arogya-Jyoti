@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import Button from '../components/Shared/Button';
-import { getReport } from '../services/api';
+// import { getReport } from '../services/api'; // Removed API call
 import html2pdf from 'html2pdf.js';
 
 const ReportPage = () => {
@@ -16,17 +16,21 @@ const ReportPage = () => {
   };
 
   useEffect(() => {
-    const fetchReport = async () => {
-      try {
-        const data = await getReport();
-        setReport(data);
-      } catch (err) {
-        setError('Failed to load report. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReport();
+    const localReport = localStorage.getItem('report');
+    if (!localReport) {
+      setError('Report not found. Please complete the assessment first.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const parsedReport = JSON.parse(localReport);
+      setReport(parsedReport);
+    } catch (err) {
+      setError('Invalid report data.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   if (loading) {
@@ -100,18 +104,9 @@ const ReportPage = () => {
           </div>
 
           <div className="mt-8 flex flex-col md:flex-row md:justify-end gap-4">
-            <Button
-              text="View Health Plan"
-              onClick={() => navigate('/plan')}
-            />
-            <Button
-              text="Generate Report"
-              onClick={handleGeneratePDF}
-            />
-            <Button
-              text="Consultation"
-              onClick={() => navigate('/consultation')}
-            />
+            <Button text="View Health Plan" onClick={() => navigate('/plan')} />
+            <Button text="Generate Report" onClick={handleGeneratePDF} />
+            <Button text="Consultation" onClick={() => navigate('/consultation')} />
           </div>
         </div>
       </div>
