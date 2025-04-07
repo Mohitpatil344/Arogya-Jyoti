@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// ✅ Correct baseURL (no double slash, and not endpoint-specific)
 const API = axios.create({
-  baseURL: 'http://localhost:5000/auth', // Change this if your base URL is different
+  baseURL: 'http://localhost:5000/auth',
 });
 
 const Login = () => {
@@ -33,9 +34,9 @@ const Login = () => {
       if (data.success) {
         alert(data.message || 'Login Successful!');
 
-        // Temporary dummy storage (until backend sends user and token)
+        // ✅ Store token and user info securely
         localStorage.setItem('user', JSON.stringify({ email: formData.email }));
-        localStorage.setItem('token', 'dummy-token');
+        localStorage.setItem('token', data.token); // ← using actual token
 
         navigate('/');
         navigate(0); // Refresh

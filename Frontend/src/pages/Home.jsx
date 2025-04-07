@@ -30,8 +30,8 @@ const Home = () => {
                   Manage your health, view your past assessments, and stay informed.
                 </p>
                 <Button
-                  text="Go to Dashboard"
-                  onClick={() => navigate('/dashboard')}
+                  text="Start Your Assessment"
+                  onClick={() => navigate('/form')}
                   className="text-lg px-8 py-3 bg-blue-600 hover:bg-blue-700 inline-flex items-center"
                   icon={<ArrowRight className="ml-2 w-5 h-5" />}
                 />
