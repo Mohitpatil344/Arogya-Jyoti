@@ -8,9 +8,10 @@ const ChatBot = () => {
     { type: 'bot', text: 'Hello! I\'m your diabetes care assistant. How can I help you today?' }
   ]);
   const [input, setInput] = useState('');
-  const messagesEndRef = useRef(null);
   const [isMinimized, setIsMinimized] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+const token = localStorage.getItem('token');
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -22,34 +23,43 @@ const ChatBot = () => {
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // Add user message
-    setMessages(prev => [...prev, { type: 'user', text: input }]);
+    const userMessage = input.trim();
 
-    // Simulate bot response based on keywords
-    const response = generateResponse(input.toLowerCase());
-    
-    // Add bot response with a slight delay
-    setTimeout(() => {
-      setMessages(prev => [...prev, { type: 'bot', text: response }]);
-    }, 1000);
-
+    // Show user message
+    setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
     setInput('');
-  };
+    setLoading(true);
 
-  const generateResponse = (input) => {
-    if (input.includes('sugar') || input.includes('glucose')) {
-      return "Normal blood sugar levels are less than 100 mg/dL after not eating (fasting) for at least 8 hours. And they're less than 140 mg/dL 2 hours after eating. If you're concerned about your blood sugar levels, please consult a healthcare provider.";
+    try {
+      const res = await fetch('http://localhost:5000/api/chat', {
+        method: 'POST',
+        
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+
+        },
+        body: JSON.stringify({ message: userMessage })
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to fetch response');
+      }
+
+      const data = await res.json();
+
+      setMessages(prev => [
+        ...prev,
+        { type: 'bot', text: data?.response || 'Sorry, no response received.' }
+      ]);
+    } catch (error) {
+      setMessages(prev => [
+        ...prev,
+        { type: 'bot', text: 'Something went wrong while contacting the server.' }
+      ]);
+    } finally {
+      setLoading(false);
     }
-    if (input.includes('exercise') || input.includes('physical activity')) {
-      return "Regular physical activity is important for managing diabetes. Aim for at least 150 minutes of moderate-intensity aerobic activity or 75 minutes of vigorous activity per week. Always consult your doctor before starting a new exercise routine.";
-    }
-    if (input.includes('diet') || input.includes('food') || input.includes('eat')) {
-      return "A diabetes-friendly diet should include: plenty of non-starchy vegetables, lean proteins, whole grains, and healthy fats. Limit refined carbs and sugary foods. Consider working with a dietitian for personalized advice.";
-    }
-    if (input.includes('symptoms')) {
-      return "Common diabetes symptoms include: increased thirst, frequent urination, extreme hunger, unexplained weight loss, fatigue, blurred vision, and slow-healing sores. If you experience these symptoms, please consult a healthcare provider.";
-    }
-    return "I can help you with information about diabetes management, including diet, exercise, blood sugar levels, and symptoms. What would you like to know more about?";
   };
 
   const handleKeyPress = (e) => {
@@ -79,13 +89,12 @@ const ChatBot = () => {
                 </button>
               </div>
             </div>
+
             <div className="h-96 overflow-y-auto p-4">
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`mb-4 ${
-                    message.type === 'user' ? 'text-right' : 'text-left'
-                  }`}
+                  className={`mb-4 ${message.type === 'user' ? 'text-right' : 'text-left'}`}
                 >
                   <div
                     className={`inline-block p-3 rounded-lg ${
@@ -98,8 +107,16 @@ const ChatBot = () => {
                   </div>
                 </div>
               ))}
+              {loading && (
+                <div className="text-left mb-4">
+                  <div className="inline-block p-3 rounded-lg bg-gray-100 text-gray-800">
+                    Typing...
+                  </div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
+
             <div className="p-4 border-t">
               <div className="flex gap-2">
                 <input
