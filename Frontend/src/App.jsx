@@ -6,6 +6,7 @@ import FormPage from './pages/FormPage';
 import LifestylePage from './pages/LifestylePage';
 import ReportPage from './pages/ReportPage';
 import PlanPage from './pages/PlanPage';
+import Reportpdfpage from './pages/Reportpdfpage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/lifestyle" element={<LifestylePage />} />
             <Route path="/report" element={<ReportPage />} />
             <Route path="/plan" element={<PlanPage />} />
+            <Route path="/report-pdf" element={<Reportpdfpage />} />
           </Routes>
         </main>
       </div>

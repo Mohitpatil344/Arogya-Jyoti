@@ -3,8 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import Button from '../components/Shared/Button';
 import { getReport } from '../services/api';
+import html2pdf from 'html2pdf.js';
 
 const ReportPage = () => {
+
+  const handleGeneratePDF = () => {
+    navigate('/report-pdf', { state: { report } });
+  };
+  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState(null);
@@ -98,6 +104,11 @@ const ReportPage = () => {
             <Button
               text="View Health Plan"
               onClick={() => navigate('/plan')}
+            />
+            <Button
+              text="Generate Report"
+              onClick={handleGeneratePDF}
+              className="ml-4"
             />
           </div>
         </div>
