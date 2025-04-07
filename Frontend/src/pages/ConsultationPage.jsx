@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Phone, Mail, Star, Heart, Activity, Apple, Coffee, Users } from 'lucide-react';
 
-function App() {
+function ConsultationPage() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const navigate = useNavigate();
 
   const doctors = [
     {
@@ -98,7 +100,10 @@ function App() {
                     <span className="ml-2">{doctor.rating}</span>
                   </div>
                   <button 
-                    onClick={() => setSelectedDoctor(doctor)}
+                    onClick={() => {
+                      setSelectedDoctor(doctor);
+                      navigate('/meet');
+                    }}
                     className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     Book Consultation
@@ -156,7 +161,7 @@ function App() {
               </div>
             </div>
             <div className="flex items-start space-x-4">
-              <Coffee className="w-8 h-8 text-brown-600" />
+              <Coffee className="w-8 h-8 text-amber-600" />
               <div>
                 <h3 className="font-bold mb-2">Lifestyle Changes</h3>
                 <p className="text-gray-600">Maintain regular exercise routine and manage stress through relaxation techniques.</p>
@@ -198,4 +203,4 @@ function App() {
   );
 }
 
-export default App;
+export default ConsultationPage;
