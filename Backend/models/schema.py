@@ -23,7 +23,7 @@ class UserRegisterSchema(BaseModel):
     password: str = Field(..., min_length=6)
 
 class UserLoginSchema(BaseModel):
-    username: str
+    email: EmailStr  
     password: str
 
 class UserSchema(BaseModel):

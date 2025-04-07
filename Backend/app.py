@@ -1,7 +1,7 @@
 import os
 from flask import Flask, jsonify
 
-from routes import prediction, auth, dashboard, admin, report, lifestyle
+from routes import prediction, auth, dashboard, admin, report, lifestyle, scanner  # Import all route modules
 from Database import db  # Import the database setup
 
 app = Flask(__name__ ,template_folder='templates')
@@ -9,8 +9,9 @@ app = Flask(__name__ ,template_folder='templates')
 # Use an environment variable for better security (fallback to a default)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your_secret_key")
 
-# Enable CORS for frontend interactions (e.g., Flutter, React)
-# CORS(app)
+from flask_cors import CORS
+CORS(app)
+
 
 # Initialize the MongoDB connection
 try:
@@ -30,6 +31,7 @@ app.register_blueprint(dashboard.bp)
 app.register_blueprint(admin.bp)
 app.register_blueprint(report.bp)
 app.register_blueprint(lifestyle.bp)
+app.register_blueprint(scanner.bp)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)  # Allows external access

@@ -3,12 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import Button from '../components/Shared/Button';
 import { getReport } from '../services/api';
+import html2pdf from 'html2pdf.js';
 
 const ReportPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState(null);
   const [error, setError] = useState(null);
+
+  const handleGeneratePDF = () => {
+    navigate('/report-pdf', { state: { report } });
+  };
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -94,10 +99,18 @@ const ReportPage = () => {
             </ul>
           </div>
 
-          <div className="mt-8 flex justify-end">
+          <div className="mt-8 flex flex-col md:flex-row md:justify-end gap-4">
             <Button
               text="View Health Plan"
               onClick={() => navigate('/plan')}
+            />
+            <Button
+              text="Generate Report"
+              onClick={handleGeneratePDF}
+            />
+            <Button
+              text="Consultation"
+              onClick={() => navigate('/consultation')}
             />
           </div>
         </div>
