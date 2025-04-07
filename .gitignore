@@ -1,0 +1,42 @@
+# Node modules (React)
+Frontend/node_modules/
+
+# Build files (React)
+Frontend/build/
+Frontend/dist/
+
+# Environment files
+*.env
+*.env.local
+*.env.development
+*.env.production
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pip-log.txt
+
+# Python cache and virtual environments
+_pycache_/
+*.py[cod]
+*.pyo
+Backend/venv/
+Backend/env/
+Backend/.venv/
+Backend/.env/
+
+# Flask specific
+instance/
+*.db
+*.sqlite3
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+
+# System files
+.DS_Store
+Thumbs.db
