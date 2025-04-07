@@ -101,3 +101,15 @@ class ReportSchema(BaseModel):
     health_plan: Optional[HealthPlanSchema]
     generated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
 
+# ===========================
+# Chat Schemas
+# ===========================
+
+class ChatMessageSchema(BaseModel):
+    user_id: str = Field(..., min_length=24, max_length=24)
+    user_message: str
+    bot_response: str
+    timestamp: Optional[str] = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+class ChatHistoryResponseSchema(BaseModel):
+    chats: List[ChatMessageSchema]

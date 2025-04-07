@@ -13,9 +13,9 @@ SECRET_KEY = "your_jwt_secret_key_here"  # Replace with a secure key or fetch fr
 def generate_jwt(user_id):
     payload = {
         "user_id": str(user_id),
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)  # Token valid for 1 day
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)
     }
-    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+    return jwt.encode(payload, current_app.config['JWT_SECRET'], algorithm="HS256")
 
 # --------------------------
 # Register Endpoint (POST)

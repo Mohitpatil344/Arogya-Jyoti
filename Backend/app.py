@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify
 from dotenv import load_dotenv
+from routes.gemini_chat_route import chat_bp
 
 # ✅ Load environment variables first
 load_dotenv()
@@ -14,7 +15,7 @@ from flask_cors import CORS
 app = Flask(__name__, template_folder='templates')
 
 # ✅ Load and set configs from .env
-app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "your_jwt_fallback_key")
+app.config['JWT_SECRET'] = os.getenv("JWT_SECRET")
 app.config['MONGO_URI'] = os.getenv("MONGO_URI")
 app.config['GEMINI_API_KEY'] = os.getenv("GEMINI_API_KEY")
 
@@ -22,7 +23,7 @@ app.config['GEMINI_API_KEY'] = os.getenv("GEMINI_API_KEY")
 CORS(app)
 
 # ✅ Debug print (remove in prod)
-print("JWT_SECRET_KEY:", app.config['JWT_SECRET_KEY'])
+print("JWT_SECRET:", app.config['JWT_SECRET'])  # ✅ Correct
 print("Mongo URI:", "Loaded" if app.config['MONGO_URI'] else "Not Found")
 print("Gemini API Key:", "Loaded" if app.config['GEMINI_API_KEY'] else "Not Found")
 
@@ -46,6 +47,7 @@ app.register_blueprint(admin.bp)
 app.register_blueprint(report.bp)
 app.register_blueprint(lifestyle.bp)
 app.register_blueprint(scanner.bp)
+app.register_blueprint(chat_bp)
 
 # Run app
 if __name__ == "__main__":
