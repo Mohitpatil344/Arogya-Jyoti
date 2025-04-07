@@ -1,4 +1,4 @@
-#!C:\Users\mrmoh\OneDrive\Desktop\Arogya jyoti\Backend\venv\Scripts\python.exe
+#!E:\Vedang\STUDY\Programming\com.vedang.play\V2WEngg\MiniProj sem 6\Arogya-Jyoti\Backend\venv\Scripts\python.exe
 '''
 The MIT License (MIT)
 

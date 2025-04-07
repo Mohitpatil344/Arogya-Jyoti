@@ -30,9 +30,11 @@ const FormPage = () => {
     setLoading(true);
     try {
       const result = await predictDiabetes(formData);
-      // Store both the risk level and the form data
+
+      // Store prediction result and form data
       localStorage.setItem('diabetesRisk', result.risk);
       localStorage.setItem('medicalData', JSON.stringify(formData));
+
       navigate('/lifestyle');
     } catch (error) {
       alert('Error submitting form. Please try again.');
@@ -45,86 +47,16 @@ const FormPage = () => {
     <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Medical Information</h2>
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm">
-        <InputField
-          label="Number of Pregnancies"
-          type="number"
-          name="pregnancies"
-          value={formData.pregnancies}
-          onChange={handleChange}
-          min="0"
-          required
-        />
-        <InputField
-          label="Glucose Level (mg/dL)"
-          type="number"
-          name="glucose"
-          value={formData.glucose}
-          onChange={handleChange}
-          min="0"
-          required
-        />
-        <InputField
-          label="Blood Pressure (mm Hg)"
-          type="number"
-          name="bloodPressure"
-          value={formData.bloodPressure}
-          onChange={handleChange}
-          min="0"
-          required
-        />
-        <InputField
-          label="Skin Thickness (mm)"
-          type="number"
-          name="skinThickness"
-          value={formData.skinThickness}
-          onChange={handleChange}
-          min="0"
-          required
-        />
-        <InputField
-          label="Insulin Level (mu U/ml)"
-          type="number"
-          name="insulin"
-          value={formData.insulin}
-          onChange={handleChange}
-          min="0"
-          required
-        />
-        <InputField
-          label="BMI"
-          type="number"
-          name="bmi"
-          value={formData.bmi}
-          onChange={handleChange}
-          step="0.1"
-          min="0"
-          required
-        />
-        <InputField
-          label="Diabetes Pedigree Function"
-          type="number"
-          name="diabetesPedigree"
-          value={formData.diabetesPedigree}
-          onChange={handleChange}
-          step="0.001"
-          min="0"
-          required
-        />
-        <InputField
-          label="Age"
-          type="number"
-          name="age"
-          value={formData.age}
-          onChange={handleChange}
-          min="0"
-          required
-        />
+        <InputField label="Number of Pregnancies" type="number" name="pregnancies" value={formData.pregnancies} onChange={handleChange} min="0" required />
+        <InputField label="Glucose Level (mg/dL)" type="number" name="glucose" value={formData.glucose} onChange={handleChange} min="0" required />
+        <InputField label="Blood Pressure (mm Hg)" type="number" name="bloodPressure" value={formData.bloodPressure} onChange={handleChange} min="0" required />
+        <InputField label="Skin Thickness (mm)" type="number" name="skinThickness" value={formData.skinThickness} onChange={handleChange} min="0" required />
+        <InputField label="Insulin Level (mu U/ml)" type="number" name="insulin" value={formData.insulin} onChange={handleChange} min="0" required />
+        <InputField label="BMI" type="number" name="bmi" value={formData.bmi} onChange={handleChange} step="0.1" min="0" required />
+        <InputField label="Diabetes Pedigree Function" type="number" name="diabetesPedigree" value={formData.diabetesPedigree} onChange={handleChange} step="0.001" min="0" required />
+        <InputField label="Age" type="number" name="age" value={formData.age} onChange={handleChange} min="0" required />
         <div className="flex justify-end mt-6">
-          <Button
-            text={loading ? 'Submitting...' : 'Continue to Lifestyle Assessment'}
-            type="submit"
-            disabled={loading}
-          />
+          <Button text={loading ? 'Submitting...' : 'Continue to Lifestyle Assessment'} type="submit" disabled={loading} />
         </div>
       </form>
     </div>

@@ -63,7 +63,7 @@ const RegisterPage = () => {
           className="w-full mb-4 px-3 py-2 border rounded"
         />
 
-        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded">
+        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
           Register
         </button>
       </form>
