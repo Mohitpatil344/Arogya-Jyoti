@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Button from "../components/Shared/Button";
+import MealLogger from "../components/MealLogger";
 
 // Blood Sugar Data
 const bloodSugarData = [
@@ -533,7 +534,7 @@ const Home = () => {
           ))}
         </div>
       </div>
-
+          <MealLogger />
       {/* Meal Plan Preview Section */}
       <div className="container mx-auto px-4 py-24">
         <motion.div
