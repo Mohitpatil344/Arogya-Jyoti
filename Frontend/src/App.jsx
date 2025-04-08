@@ -20,6 +20,7 @@ import Meet from './pages/Meet';
 import ProfileModal from './components/Profile/ProfileModel';
 import ChatBot from './components/Chat/ChatBot';
 import Navbar from './components/Shared/Navbar';
+import DoctorAvailability from './pages/DoctorAvailability';
 
 // Layout component
 const Layout = ({ children, isProfileOpen, setIsProfileOpen }) => {
@@ -79,6 +80,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<LayoutWithProps isProfileOpen={isProfileOpen} setIsProfileOpen={setIsProfileOpen}><ProfileModal /></LayoutWithProps>} />
+          <Route path="/doctor-availability" element={<LayoutWithProps isProfileOpen={isProfileOpen} setIsProfileOpen={setIsProfileOpen}><DoctorAvailability /></LayoutWithProps>} />
+        
         </Routes>
         <ChatBot />
         <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />

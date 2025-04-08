@@ -61,6 +61,16 @@ const Navbar = ({ isLoggedIn, handleLogout, setIsProfileOpen }) => {
                 >
                   Logout
                 </button>
+                <button
+                onClick={() => {
+                  navigate("/doctor-availability");
+                  setShowDropdown(false); // optional: closes dropdown after navigation
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-blue-500 hover:bg-gray-100"
+              >
+                Doctor Availability
+              </button>
+
               </div>
             )}
           </div>

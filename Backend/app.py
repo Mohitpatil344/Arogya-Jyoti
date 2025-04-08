@@ -9,7 +9,8 @@ load_dotenv()
 # ✅ Import blueprints
 from routes.gemini_chat_route import chat_bp
 from routes.prediction import prediction_bp
-from routes import auth, dashboard, admin, report, lifestyle, scanner
+from routes import auth, dashboard, admin, report, lifestyle, scanner, Doctor
+from routes.Doctor import doctor_bp
 from Database import db
 
 # Create the Flask app
@@ -49,6 +50,7 @@ app.register_blueprint(report.bp)
 app.register_blueprint(lifestyle.bp)
 app.register_blueprint(scanner.bp)
 app.register_blueprint(chat_bp)
+app.register_blueprint(doctor_bp)  
 
 # Run app
 if __name__ == "__main__":

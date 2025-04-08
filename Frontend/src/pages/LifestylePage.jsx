@@ -26,6 +26,17 @@ const LifestylePage = () => {
     sittingHours: ''
   });
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Updates the formData state with the new value from the input field.
+ * The function uses the input's name attribute as the key and the trimmed input value as the value.
+ *
+ * @param {Object} e - The event object from the input field change.
+ * @param {string} e.target.name - The name attribute of the input field.
+ * @param {string} e.target.value - The current value of the input field.
+ */
+
+/*******  e91ca024-3aa8-48ab-b3c7-5f23d673b5e9  *******/
   const handleChange = (e) => {
     setFormData({
       ...formData,

@@ -1,40 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Phone, Mail, Star, Heart, Activity, Apple, Coffee, Users } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Phone,
+  Mail,
+  Star,
+  Heart,
+  Activity,
+  Apple,
+  Coffee,
+  Users
+} from 'lucide-react';
 
 function ConsultationPage() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [allDoctors, setAllDoctors] = useState([]); // ✅ Define doctors state
   const navigate = useNavigate();
 
-  const doctors = [
+  const defaultDoctors = [
     {
       id: 1,
-      name: "Dr. Sarah Johnson",
-      specialty: "Endocrinologist",
-      experience: "15+ years",
-      image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: 4.9,
-      hospital: "Diabetes Care Center"
-    },
-    {
-      id: 2,
-      name: "Dr. Michael Chen",
-      specialty: "Diabetologist",
-      experience: "12+ years",
-      image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300",
+      name: 'Dr. John Doe',
+      available: true,
+      specialty: 'Endocrinologist',
+      image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop&q=80',
+      timeSlots: ['9:00 AM - 11:00 AM', '2:00 PM - 4:00 PM'],
+      expertise: 'Type 1 Diabetes Management',
       rating: 4.8,
-      hospital: "Metropolitan Medical Center"
+      experience: '10+ years experience'
     },
     {
-      id: 3,
-      name: "Dr. Emily Rodriguez",
-      specialty: "Endocrinologist",
-      experience: "10+ years",
-      image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=300&h=300",
+      id: 4,
+      name: 'Dr. Michael Chen',
+      available: true,
+      specialty: 'Diabetologist',
+      image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&auto=format&fit=crop&q=80',
+      timeSlots: ['8:00 AM - 10:00 AM', '1:00 PM - 3:00 PM'],
+      expertise: 'Type 2 Diabetes Management',
       rating: 4.7,
-      hospital: "Wellness Institute"
+      experience: '8+ years experience'
+    },
+    {
+      id: 5,
+      name: 'Dr. Sarah Williams',
+      available: true,
+      specialty: 'Endocrinologist',
+      image: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80',
+      timeSlots: ['9:30 AM - 11:30 AM', '2:30 PM - 4:30 PM'],
+      expertise: 'Diabetes & Thyroid Disorders',
+      rating: 4.9,
+      experience: '12+ years experience'
     }
   ];
+
+  useEffect(() => {
+    const customDoctors = JSON.parse(localStorage.getItem('customDoctors')) || [];
+    const transformedCustomDoctors = customDoctors.map(doc => ({
+      id: doc.id,
+      name: doc.name,
+      specialty: doc.specialty,
+      experience: doc.expertise || 'Experience not specified',
+      rating: 4.6,
+      image: doc.image
+    }));
+    setAllDoctors([...defaultDoctors, ...transformedCustomDoctors]);
+  }, []);
 
   const hospitals = [
     {
@@ -88,7 +120,7 @@ function ConsultationPage() {
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-8">Our Specialist Doctors</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {doctors.map((doctor) => (
+            {allDoctors.map((doctor) => (
               <div key={doctor.id} className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105">
                 <img src={doctor.image} alt={doctor.name} className="w-full h-64 object-cover" />
                 <div className="p-6">
@@ -99,8 +131,9 @@ function ConsultationPage() {
                     <Star className="w-5 h-5 text-yellow-400 fill-current" />
                     <span className="ml-2">{doctor.rating}</span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
+                      localStorage.setItem('selectedDoctor', JSON.stringify(doctor));
                       setSelectedDoctor(doctor);
                       navigate('/meet');
                     }}
