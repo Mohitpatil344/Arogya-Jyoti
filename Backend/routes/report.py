@@ -2,9 +2,20 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from bson import ObjectId
 from Database.db import get_collection
+import os 
+import google.generativeai as genai
+from Database.db import get_collection
+import requests
+import json
+import re
 
 # Create a Blueprint for the report routes
 bp = Blueprint("report", __name__, url_prefix="/report")
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY2"))
+GEMINI_API_KEY2 = os.getenv("GEMINI_API_KEY2")
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY2}"
+
 
 @bp.route("/generate", methods=["POST"])
 def generate_report():
@@ -77,3 +88,74 @@ def get_reports(user_id):
     except Exception as e:
         # Handle errors and return an error response
         return jsonify({"error": str(e)}), 500
+
+@bp.route("/ai-generate", methods=["POST"])
+def ai_generate_report():
+    try:
+        data = request.json
+        lifestyle_data = data.get("lifestyle_data")
+
+        if not lifestyle_data:
+            return jsonify({"error": "Missing lifestyle_data"}), 400
+
+        # Prompt Gemini
+        prompt = f"""
+        Based on the following lifestyle metrics, generate a structured personalized health report in JSON format with keys:
+        - overview
+        - exercise_plan
+        - diet_recommendations
+        - lifestyle
+        - goals
+        - next_steps
+        - disclaimer
+
+        Here is the input:
+        {lifestyle_data}
+        """
+
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}]
+        }
+
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(GEMINI_URL, json=payload, headers=headers)
+        if response.status_code != 200:
+            return jsonify({"error": f"Gemini API error: {response.text}"}), 500
+
+        result = response.json()
+        raw_text = result["candidates"][0]["content"]["parts"][0]["text"]
+
+        # Clean up code block markdown if present
+        cleaned_json_text = re.sub(r"^```json\s*|\s*```$", "", raw_text.strip())
+
+        # Parse the cleaned JSON
+        try:
+            full_report = json.loads(cleaned_json_text)
+        except json.JSONDecodeError:
+            return jsonify({
+                "error": "Failed to parse structured JSON from Gemini response.",
+                "raw_response": raw_text
+            }), 500
+
+        # Filter only required 5 keys
+        keys_to_keep = [
+            "exercise_plan",
+            "diet_recommendations",
+            "lifestyle",
+            "goals",
+            "next_steps"
+        ]
+        filtered_report = {key: full_report.get(key) for key in keys_to_keep}
+
+        return jsonify({
+            "message": "AI-based health report generated successfully!",
+            "generated_report": filtered_report
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+

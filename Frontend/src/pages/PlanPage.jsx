@@ -1,104 +1,137 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { Activity, Apple, Moon, Heart } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Activity, Apple, Moon, Heart, ClipboardList } from "lucide-react";
+import axios from "axios";
 
 const PlanPage = () => {
   const { state } = useLocation();
-  const condition = state?.condition || 'non-diabetic';
+  const condition = state?.condition || "non-diabetic";
 
-  const plans = {
-    diabetic: {
-      exercise: [
-        '30 minutes of moderate-intensity walking daily',
-        'Light strength training 2-3 times a week',
-        'Try low-impact cardio like cycling or swimming',
-        'Yoga or tai chi for flexibility and stress relief',
-        '5-10 minutes of stretching morning and night',
-      ],
-      diet: [
-        'Focus on low-glycemic foods (like legumes, leafy greens)',
-        'Avoid sugary drinks and processed snacks',
-        'Eat smaller meals more frequently',
-        'Consume high-fiber foods like oats and flaxseeds',
-        'Drink at least 2.5 liters of water daily',
-        'Limit red meat and opt for lean protein like tofu or chicken',
-      ],
-      lifestyle: [
-        'Monitor blood sugar regularly (fasting + post-meal)',
-        'Sleep at least 7-8 hours per night',
-        'Reduce stress through meditation or yoga',
-        'Quit smoking and limit alcohol',
-        'Take 5-minute movement breaks during long sitting periods',
-      ],
-      goals: [
-        'Maintain stable blood glucose levels',
-        'Lose 3-5 kg over 3 months',
-        'Improve insulin sensitivity',
-        'Lower HbA1c levels below 7%',
-        'Increase daily energy and reduce fatigue',
-      ],
-      nextSteps: [
-        'Consult a dietitian for a personalized meal plan',
-        'Track sugar levels using a glucose monitor',
-        'Schedule a follow-up check-up in 1 month',
-        'Download a diabetes management app',
-        'Join a local diabetes support group or online community',
-      ],
-    },
-    'non-diabetic': {
-      exercise: [
-        '30 minutes of brisk walking every day',
-        'Stretching exercises in the morning',
-        'Do bodyweight training 2x per week',
-        'Take stairs instead of the elevator',
-        'Weekend cycling or hiking for fun + fitness',
-      ],
-      diet: [
-        'Eat more vegetables and whole grains',
-        'Reduce sugar and processed food intake',
-        'Include healthy fats (nuts, seeds, olive oil)',
-        'Practice portion control during meals',
-        'Stay hydrated—aim for 8-10 glasses daily',
-      ],
-      lifestyle: [
-        'Sleep at least 7 hours a night',
-        'Reduce screen time before bed',
-        'Avoid unnecessary stress through journaling or mindfulness',
-        'Limit caffeine intake in the evening',
-        'Incorporate daily habits like gratitude practice',
-      ],
-      goals: [
-        'Lose 5 kg in 3 months',
-        'Improve cardiovascular health',
-        'Build a consistent morning routine',
-        'Increase overall stamina and flexibility',
-        'Prevent future metabolic or lifestyle diseases',
-      ],
-      nextSteps: [
-        'Start tracking your meals using a health app',
-        'Join a local gym or online fitness program',
-        'Schedule a health check-up in a month',
-        'Create a weekly meal-prep plan',
-        'Find a fitness accountability partner or coach',
-      ],
-    },
-  };
-  
+  const [plans, setPlans] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/report/ai-generate",
+          {
+            lifestyle_data:
+              "Age: 28, Height: 170cm, Weight: 68kg, Sleep: 7 hours, Exercise: 3 times a week, Diet: Non-Vegetarian, Smoking: No, Alcohol: Occasionally, Medical Conditions: None",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const structured = response.data.generated_report;
+
+        const dietList = [];
+
+        if (structured.diet_recommendations) {
+          const { general, hydration, micronutrients, macronutrients, recommendations } =
+            structured.diet_recommendations;
+
+          if (general) dietList.push(general);
+          if (hydration) dietList.push(hydration);
+          if (micronutrients) dietList.push(micronutrients);
+
+          if (macronutrients) {
+            dietList.push(...Object.values(macronutrients));
+          }
+
+          if (Array.isArray(recommendations)) {
+            recommendations.forEach((rec) => {
+              if (typeof rec === "string") {
+                dietList.push(rec);
+              } else if (rec.notes || rec.category) {
+                const title = rec.category ? `${rec.category}:` : "";
+                const notes = rec.notes || "";
+                const sources = Array.isArray(rec.sources)
+                  ? rec.sources.join(", ")
+                  : "";
+                dietList.push(`${title} ${notes} ${sources && "- " + sources}`);
+              }
+            });
+          }
+        }
+
+        const goalList = [];
+        if (structured.goals) {
+          if (Array.isArray(structured.goals.short_term))
+            goalList.push(...structured.goals.short_term);
+          if (Array.isArray(structured.goals.long_term))
+            goalList.push(...structured.goals.long_term);
+          if (Array.isArray(structured.goals.example_goals))
+            goalList.push(...structured.goals.example_goals);
+          if (structured.goals.personalize)
+            goalList.push(structured.goals.personalize);
+        }
+
+        setPlans((prev) => ({
+          ...prev,
+          [condition]: {
+            exercise: structured.exercise_plan?.recommendations || [],
+            diet: dietList,
+            lifestyle: Object.values(structured.lifestyle?.recommendations || structured.lifestyle || {}),
+            goals: goalList,
+            nextSteps: Array.isArray(structured.next_steps)
+              ? structured.next_steps
+              : [],
+            overview: structured.overview || {},
+            disclaimer: structured.disclaimer || {},
+          },
+        }));
+      } catch (error) {
+        console.error("Failed to fetch plan:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, [condition]);
 
   const plan = plans[condition];
 
   const categories = [
-    { icon: Activity, title: 'Exercise Plan', key: 'exercise' },
-    { icon: Apple, title: 'Diet Recommendations', key: 'diet' },
-    { icon: Moon, title: 'Lifestyle Changes', key: 'lifestyle' },
-    { icon: Heart, title: 'Health Goals', key: 'goals' },
+    { icon: Activity, title: "Exercise Plan", key: "exercise" },
+    { icon: Apple, title: "Diet Recommendations", key: "diet" },
+    { icon: Moon, title: "Lifestyle Changes", key: "lifestyle" },
+    { icon: Heart, title: "Health Goals", key: "goals" },
   ];
 
+  if (loading) {
+    return (
+      <div className="text-center mt-10 text-gray-600">
+        Loading your health plan...
+      </div>
+    );
+  }
+
+  if (!plan) {
+    return (
+      <div className="text-center mt-10 text-red-500">
+        No plan found for this condition.
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        Your {condition === 'diabetic' ? 'Diabetic' : 'Personalized'} Health Plan
+    <div className="max-w-4xl mx-auto p-4">
+      <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        Your {condition === "diabetic" ? "Diabetic" : "Personalized"} Health Plan
       </h2>
+
+      {plan.overview?.title && (
+        <div className="bg-blue-50 p-4 rounded-lg mb-6">
+          <h3 className="text-xl font-semibold mb-2">{plan.overview.title}</h3>
+          <p className="text-gray-700 mb-2">{plan.overview.introduction}</p>
+          <p className="text-gray-600 italic">{plan.overview.summary}</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map(({ icon: Icon, title, key }) => (
@@ -107,29 +140,52 @@ const PlanPage = () => {
               <Icon className="h-6 w-6 text-blue-600" />
               <h3 className="ml-2 text-xl font-semibold">{title}</h3>
             </div>
-            <ul className="space-y-3">
-              {plan?.[key]?.map((item, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span className="text-gray-700">{item}</span>
-                </li>
-              ))}
-            </ul>
+
+            {Array.isArray(plan[key]) && plan[key].length > 0 ? (
+              <ul className="space-y-3">
+                {plan[key].map((item, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-gray-700">
+                      {typeof item === "string"
+                        ? item
+                        : JSON.stringify(item, null, 2)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500 italic">No data available.</p>
+            )}
           </div>
         ))}
       </div>
 
-      <div className="mt-8 bg-blue-50 p-6 rounded-xl">
-        <h3 className="text-xl font-semibold mb-4">Next Steps</h3>
-        <ul className="space-y-3">
-          {plan?.nextSteps?.map((step, index) => (
-            <li key={index} className="flex items-start">
-              <span className="font-bold mr-2">{index + 1}.</span>
-              <span className="text-gray-700">{step}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {plan.nextSteps && plan.nextSteps.length > 0 && (
+        <div className="mt-8 bg-blue-100 p-6 rounded-xl">
+          <h3 className="text-xl font-semibold mb-4 flex items-center">
+            <ClipboardList className="w-5 h-5 mr-2" />
+            Next Steps
+          </h3> 
+          <ul className="space-y-3">
+            {plan.nextSteps.map((step, index) => (
+              <li key={index} className="flex items-start">
+                <span className="font-bold mr-2">{index + 1}.</span>
+                <span className="text-gray-700">{step}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {plan.disclaimer?.text && (
+        <div className="mt-8 p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
+          <strong className="block text-yellow-800 mb-1">
+            {plan.disclaimer.title || "Disclaimer"}
+          </strong>
+          <p className="text-yellow-700 text-sm">{plan.disclaimer.text}</p>
+        </div>
+      )}
     </div>
   );
 };
