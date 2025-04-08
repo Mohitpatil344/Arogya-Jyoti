@@ -4,6 +4,8 @@ import DailyRoutine from '../components/Lifestyle/DailyRoutine';
 import Diet from '../components/Lifestyle/Diet';
 import PhysicalActivity from '../components/Lifestyle/PhysicalActivity';
 import Button from '../components/Shared/Button';
+import { getLifestyleSuggestion } from '../services/gemini';
+
 
 const LifestylePage = () => {
   const navigate = useNavigate();
@@ -32,45 +34,54 @@ const LifestylePage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
   
-    const localReport = JSON.parse(localStorage.getItem('report')) || {};
+    try {
+      const localReport = JSON.parse(localStorage.getItem('report')) || {};
   
-    const updatedReport = {
-      ...localReport,
-      lifestyleMetrics: {
-        'Exercise Frequency': formData.exerciseFrequency,
-        'Exercise Type': formData.exerciseType,
-        'Screen Time': formData.screenTime,
-        'Sitting Hours': formData.sittingHours
-      },
-      medicalMetrics: {
-        ...localReport.medicalMetrics,
-        'Sleep Hours': formData.sleepHours,
-        'Sugar Intake': formData.sugarIntake,
-        'Calorie Intake': formData.calorieIntake,
-        'Water Intake': formData.waterIntake
-      },
-      observations: [
-        ...localReport.observations || [],
-        parseInt(formData.sleepHours) < 5
-          ? 'You are not getting enough sleep.'
-          : 'Your sleep pattern looks good.',
-        parseInt(formData.sugarIntake) > 100
-          ? 'High sugar intake observed.'
-          : 'Sugar intake is within healthy range.',
-        formData.exerciseFrequency === 'none'
-          ? 'Consider adding physical activity to your routine.'
-          : 'Great job staying active!'
-      ]
-    };
+      const lifestyleSuggestion = await getLifestyleSuggestion(formData);
   
-    localStorage.setItem('report', JSON.stringify(updatedReport));
-    navigate('/report');
-    setLoading(false);
+      const updatedReport = {
+        ...localReport,
+        lifestyleMetrics: {
+          'Exercise Frequency': formData.exerciseFrequency,
+          'Exercise Type': formData.exerciseType,
+          'Screen Time': formData.screenTime,
+          'Sitting Hours': formData.sittingHours
+        },
+        medicalMetrics: {
+          ...localReport.medicalMetrics,
+          'Sleep Hours': formData.sleepHours,
+          'Sugar Intake': formData.sugarIntake,
+          'Calorie Intake': formData.calorieIntake,
+          'Water Intake': formData.waterIntake
+        },
+        observations: [
+          ...(localReport.observations || []),
+          parseInt(formData.sleepHours) < 5
+            ? 'You are not getting enough sleep.'
+            : 'Your sleep pattern looks good.',
+          parseInt(formData.sugarIntake) > 100
+            ? 'High sugar intake observed.'
+            : 'Sugar intake is within healthy range.',
+          formData.exerciseFrequency === 'none'
+            ? 'Consider adding physical activity to your routine.'
+            : 'Great job staying active!',
+          lifestyleSuggestion  // <-- Gemini-generated suggestion
+        ]
+      };
+  
+      localStorage.setItem('report', JSON.stringify(updatedReport));
+      navigate('/report');
+    } catch (error) {
+      alert('Failed to get suggestions from Gemini.');
+    } finally {
+      setLoading(false);
+    }
   };
+  
   
 
   return (
