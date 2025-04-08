@@ -6,7 +6,6 @@ import PhysicalActivity from '../components/Lifestyle/PhysicalActivity';
 import Button from '../components/Shared/Button';
 import { getLifestyleSuggestion } from '../services/gemini';
 
-
 const LifestylePage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -37,26 +36,26 @@ const LifestylePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       const localReport = JSON.parse(localStorage.getItem('report')) || {};
-  
+
       const lifestyleSuggestion = await getLifestyleSuggestion(formData);
-  
+
       const updatedReport = {
         ...localReport,
         lifestyleMetrics: {
           'Exercise Frequency': formData.exerciseFrequency,
           'Exercise Type': formData.exerciseType,
           'Screen Time': formData.screenTime,
-          'Sitting Hours': formData.sittingHours
-        },
-        medicalMetrics: {
-          ...localReport.medicalMetrics,
+          'Sitting Hours': formData.sittingHours,
           'Sleep Hours': formData.sleepHours,
           'Sugar Intake': formData.sugarIntake,
           'Calorie Intake': formData.calorieIntake,
-          'Water Intake': formData.waterIntake
+          'Water Intake': formData.waterIntake,
+        },
+        medicalMetrics: {
+          ...localReport.medicalMetrics
         },
         observations: [
           ...(localReport.observations || []),
@@ -69,10 +68,10 @@ const LifestylePage = () => {
           formData.exerciseFrequency === 'none'
             ? 'Consider adding physical activity to your routine.'
             : 'Great job staying active!',
-          lifestyleSuggestion  // <-- Gemini-generated suggestion
+          lifestyleSuggestion
         ]
       };
-  
+
       localStorage.setItem('report', JSON.stringify(updatedReport));
       navigate('/report');
     } catch (error) {
@@ -81,8 +80,6 @@ const LifestylePage = () => {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <div className="max-w-2xl mx-auto">

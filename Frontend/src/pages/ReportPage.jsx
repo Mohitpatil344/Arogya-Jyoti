@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, CheckCircle } from "lucide-react";
 import Button from "../components/Shared/Button";
-import html2pdf from "html2pdf.js";
 
 const ReportPage = () => {
   const navigate = useNavigate();
@@ -115,10 +114,9 @@ const ReportPage = () => {
                 </li>
               ))}
             </ul>
+
             <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">
-                Doctor’s Suggestion
-              </h3>
+              <h3 className="text-lg font-semibold mb-4">Doctor’s Suggestion</h3>
               <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md text-blue-800">
                 <p>
                   {report?.observations?.slice(-1)[0] ||
@@ -131,7 +129,7 @@ const ReportPage = () => {
           </div>
 
           <div className="mt-8 flex flex-col md:flex-row md:justify-end gap-4">
-          <Button
+            <Button
               text="View Health Plan"
               onClick={() =>
                 navigate("/plan", {
@@ -139,12 +137,8 @@ const ReportPage = () => {
                 })
               }
             />
-
             <Button text="Generate Report" onClick={handleGeneratePDF} />
-            <Button
-              text="Consultation"
-              onClick={() => navigate("/consultation")}
-            />
+            <Button text="Consultation" onClick={() => navigate("/consultation")} />
           </div>
         </div>
       </div>
