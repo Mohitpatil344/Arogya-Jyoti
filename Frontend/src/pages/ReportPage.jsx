@@ -131,7 +131,15 @@ const ReportPage = () => {
           </div>
 
           <div className="mt-8 flex flex-col md:flex-row md:justify-end gap-4">
-            <Button text="View Health Plan" onClick={() => navigate("/plan")} />
+          <Button
+              text="View Health Plan"
+              onClick={() =>
+                navigate("/plan", {
+                  state: { condition: isHighRisk ? "diabetic" : "non-diabetic" },
+                })
+              }
+            />
+
             <Button text="Generate Report" onClick={handleGeneratePDF} />
             <Button
               text="Consultation"
